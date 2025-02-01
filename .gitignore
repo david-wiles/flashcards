@@ -1,3 +1,7 @@
 target/
 .idea/
 .bsp/
+
+docker/conf/api/private.pem
+docker/conf/api/public.der
+docker/conf/api/rsa.pem

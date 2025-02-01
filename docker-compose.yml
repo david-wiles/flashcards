@@ -1,9 +1,11 @@
 version: '3'
 services:
   api:
-    image: flashcards-api:local
+    image: flashcards-api:0.1.0-SNAPSHOT
     volumes:
       - ./docker/conf/api:/conf
+    ports:
+      - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy

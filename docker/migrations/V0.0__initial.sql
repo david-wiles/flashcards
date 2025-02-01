@@ -1,12 +1,18 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 create table users
 (
-    id uuid not null
+    id uuid not null default uuid_generate_v4()
         constraint users_pk
             primary key,
     username varchar(64) not null
         constraint users_pk2
             unique,
-    pass_hash varchar(32) not null
+    email varchar(512) not null,
+    pass_hash varchar(256) not null,
+    is_active boolean not null,
+    date_created timestamp not null default now(),
+    date_modified timestamp not null default now()
 );
 
 create table flashcards
@@ -21,8 +27,8 @@ create table flashcards
     question_text varchar(1024) not null,
     answer_text varchar(256) not null,
     categories varchar(64)[] not null,
-    created_at timestamp not null,
-    modified_at timestamp not null
+    date_created timestamp not null default now(),
+    date_modified timestamp not null default now()
 );
 
 create table flashcard_reviews

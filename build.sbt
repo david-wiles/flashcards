@@ -4,14 +4,24 @@ import scala.sys.process.*
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "net.davidwiles"
 
+val tagLocal = taskKey[String]("Tag the docker build as 'local'")
+def tagLocal(oldTag: String, newTag: String): String = s"docker tag $oldTag $newTag" !!
+
 val scala3 = "3.6.2"
 
 val scalatestVersion = "3.2.19"
 val scalamockVersion = "6.0.0"
-
-val tagLocal = taskKey[String]("Tag the docker build as 'local'")
-
-def tagLocal(oldTag: String, newTag: String): String = s"docker tag $oldTag $newTag" !!
+val tapirVersion = "1.11.11"
+val jBcryptVersion = "0.4"
+val jjwtVersion = "0.12.2"
+val logbackVersion = "1.5.12"
+val scalaLoggingVersion = "3.9.4"
+val configVersion = "1.4.3"
+val scalikejdbcVersion = "4.0.0"
+val hikariCPVersion = "5.0.1"
+val postgresVersion = "42.7.2"
+val pekkoVersion = "1.1.2"
+val catsVersion = "2.13.0"
 
 val testDependencies = Seq(
   "org.scalatest" %% "scalatest" % scalatestVersion % Test,
@@ -49,7 +59,26 @@ lazy val server = (project in file("server"))
   .enablePlugins(DockerPlugin)
   .enablePlugins(JavaAppPackaging)
   .settings(
-    name := "server",
+    name := "flashcards-api",
+    libraryDependencies ++=
+      Seq(
+        "com.softwaremill.sttp.tapir" %% "tapir-core"               % tapirVersion,
+        "com.softwaremill.sttp.tapir" %% "tapir-pekko-http-server"  % tapirVersion,
+        "org.apache.pekko"            %% "pekko-actor-typed"        % pekkoVersion,
+        "com.softwaremill.sttp.tapir" %% "tapir-json-circe"         % tapirVersion,
+        "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle"  % tapirVersion,
+        "com.softwaremill.sttp.tapir" %% "tapir-prometheus-metrics" % tapirVersion,
+        "ch.qos.logback"              %  "logback-classic"          % logbackVersion,
+        "com.typesafe.scala-logging"  %% "scala-logging"            % scalaLoggingVersion,
+        "com.typesafe"                %  "config"                   % configVersion,
+        "org.mindrot"                 %  "jbcrypt"                  % jBcryptVersion,
+        "io.jsonwebtoken"             %  "jjwt"                     % jjwtVersion,
+        "org.scalikejdbc"             %% "scalikejdbc"              % scalikejdbcVersion,
+        "org.scalikejdbc"             %% "scalikejdbc-config"       % scalikejdbcVersion,
+        "com.zaxxer"                  %  "HikariCP"                 % hikariCPVersion,
+        "org.postgresql"              %  "postgresql"               % postgresVersion,
+        "org.typelevel"               %% "cats-core"                % catsVersion,
+      ),
   )
   .dependsOn(common.jvm)
 
@@ -57,7 +86,7 @@ lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin)
   .settings(commonSettings)
   .settings(
-    name := "client",
+    name := "flashcards-client",
   )
   .dependsOn(common.js)
 
